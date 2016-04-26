@@ -1,0 +1,245 @@
+  ---
+2016-04-22 20:53:46 Start: ver. 2.07 20151004; PID = 2058; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-22 20:53:53 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='0' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet.mts.ru' SIM_PIN='0000' APN_USER='mts' APN_PASS='mts'
+  Sakis3G says...
+2016-04-22 20:53:54 (PID: 2058): Caught signal 2 (SIGINT)
+2016-04-22 20:53:54 (PID: 2058): Program terminated cleanly.
+  ---
+2016-04-22 20:54:20 Start: ver. 2.07 20151004; PID = 4442; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+2016-04-22 20:54:25 (PID: 4442): Caught signal 2 (SIGINT)
+2016-04-22 20:54:25 (PID: 4442): Program terminated cleanly.
+  ---
+2016-04-22 20:54:51 Start: ver. 2.07 20151004; PID = 5662; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-22 20:54:58 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='0' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='0' APN_PASS='0'
+  Sakis3G says...
+  [3;J[H[2JAlready selected value USBINTERFACE="0". Is not valid.
+Please appropriate interface by using USBINTERFACE variable, or by enabling interactive mode.
+	$ /home/pi/3g/sakis3g --interactive "connect" "--sudo" "--console" "USBINTERFACE=0" "OTHER=USBMODEM" "USBMODEM=12d1:1506" "APN=CUSTOM_APN" "CUSTOM_APN=internet" "SIM_PIN=5445" "APN_USER=0" "APN_PASS=0" "--console" "--sudo" "APN=CUSTOM_APN" "APN_USER=0" "APN_PASS=0" "SIM_PIN=5445" "SGUI=terminal" "USBINTERFACE=0" "USBMODEM=12d1:1506" "OTHER=USBMODEM" "MODEM=12d1:1506"
+
+Available options are:
+1	Interface #1
+2	Interface #2
+
+Example:
+	$ /home/pi/3g/sakis3g USBINTERFACE="1"
+
+2016-04-22 20:55:10 User interaction required or user requested to terminate
+2016-04-22 20:55:10 Testing connection...
+2016-04-22 20:55:13 Unable to establish Internet connection. Will keep trying...
+  Sakis3G info:
+  Cell network: No modem plugged or modem not set up.
+2016-04-22 20:55:24 Internet connection is DOWN. Calling Sakis3G connect...
+  Trying disconnect-reconnect...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g ignore disconnect connect --sudo --console USBINTERFACE='0' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='0' APN_PASS='0'
+  Sakis3G says...
+2016-04-22 20:55:31 (PID: 5662): Caught signal 2 (SIGINT)
+2016-04-22 20:55:31 (PID: 5662): Program terminated cleanly.
+  ---
+2016-04-22 20:55:41 Start: ver. 2.07 20151004; PID = 15838; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+2016-04-22 20:55:45 (PID: 15838): Caught signal 2 (SIGINT)
+2016-04-22 20:55:45 (PID: 15838): Program terminated cleanly.
+  ---
+2016-04-22 20:56:14 Start: ver. 2.07 20151004; PID = 16917; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-22 20:56:20 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='0' APN_PASS='0'
+  Sakis3G says...
+  [3;J[H[2JFailed to connect.
+2016-04-22 20:57:08 Failed to connect (wvdial or pppd failed to connect)
+2016-04-22 20:57:08 Testing connection...
+2016-04-22 20:57:11 Success... we are online!
+2016-04-22 20:57:11 Offline: Network device ppp0 not found or not connected. (netOperstate: down)
+2016-04-22 20:57:15 Internet connection is DOWN. Calling Sakis3G connect...
+  Trying disconnect-reconnect...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g ignore disconnect connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='0' APN_PASS='0'
+  Sakis3G says...
+  Not connected.
+[3;J[H[2JNot connected.
+Failed to connect.
+2016-04-22 20:58:04 Failed to connect (wvdial or pppd failed to connect)
+2016-04-22 20:58:04 Testing connection...
+2016-04-22 20:58:07 Success... we are online!
+2016-04-22 20:58:07 Offline: Network device ppp0 not found or not connected. (netOperstate: down)
+2016-04-22 20:58:11 Internet connection is DOWN. Calling Sakis3G connect...
+  Trying disconnect-reconnect...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g ignore disconnect connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='0' APN_PASS='0'
+  Sakis3G says...
+2016-04-22 20:58:12 (PID: 16917): Caught signal 2 (SIGINT)
+2016-04-22 20:58:12 (PID: 16917): Program terminated cleanly.
+  ---
+2016-04-22 21:00:39 Start: ver. 2.07 20151004; PID = 31418; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-22 21:00:45 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='2' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='0' APN_PASS='0'
+  Sakis3G says...
+  [3;J[H[2JFailed to connect.
+2016-04-22 21:01:22 Error while setting up modem
+2016-04-22 21:01:22 Testing connection...
+2016-04-22 21:01:25 (PID: 31418): Caught signal 2 (SIGINT)
+2016-04-22 21:01:25 (PID: 31418): Program terminated cleanly.
+  ---
+2016-04-22 21:01:33 Start: ver. 2.07 20151004; PID = 6130; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-22 21:01:40 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='0' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='0' APN_PASS='0'
+  Sakis3G says...
+  [3;J[H[2JAlready selected value USBINTERFACE="0". Is not valid.
+Please appropriate interface by using USBINTERFACE variable, or by enabling interactive mode.
+	$ /home/pi/3g/sakis3g --interactive "connect" "--sudo" "--console" "USBINTERFACE=0" "OTHER=USBMODEM" "USBMODEM=12d1:1506" "APN=CUSTOM_APN" "CUSTOM_APN=internet" "SIM_PIN=5445" "APN_USER=0" "APN_PASS=0" "--console" "--sudo" "APN=CUSTOM_APN" "APN_USER=0" "APN_PASS=0" "SIM_PIN=5445" "SGUI=terminal" "USBINTERFACE=0" "USBMODEM=12d1:1506" "OTHER=USBMODEM" "MODEM=12d1:1506"
+
+Available options are:
+1	Interface #1
+2	Interface #2
+
+Example:
+	$ /home/pi/3g/sakis3g USBINTERFACE="1"
+
+2016-04-22 21:01:52 User interaction required or user requested to terminate
+2016-04-22 21:01:52 Testing connection...
+2016-04-22 21:01:55 (PID: 6130): Caught signal 2 (SIGINT)
+2016-04-22 21:01:55 (PID: 6130): Program terminated cleanly.
+  ---
+2016-04-22 21:02:27 Start: ver. 2.07 20151004; PID = 12255; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-22 21:02:33 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+  [3;J[H[2JFailed to connect.
+2016-04-22 21:03:22 Failed to connect (wvdial or pppd failed to connect)
+2016-04-22 21:03:22 Testing connection...
+2016-04-22 21:03:25 Success... we are online!
+2016-04-22 21:03:25 Offline: Network device ppp0 not found or not connected. (netOperstate: down)
+2016-04-22 21:03:25 (PID: 12255): Caught signal 2 (SIGINT)
+2016-04-22 21:03:25 (PID: 12255): Program terminated cleanly.
+  ---
+2016-04-23 00:13:50 Start: ver. 2.07 20151004; PID = 14251; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-23 00:13:57 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+  [3;J[H[2JFailed to connect.
+2016-04-23 00:14:24 Failed to connect (wvdial or pppd failed to connect)
+2016-04-23 00:14:24 Testing connection...
+2016-04-23 00:14:27 Unable to establish Internet connection. Will keep trying...
+  Sakis3G info:
+  Cell network: No modem plugged or modem not set up.
+2016-04-23 00:14:37 Internet connection is DOWN. Calling Sakis3G connect...
+  Trying disconnect-reconnect...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g ignore disconnect connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+  Not connected.
+[3;J[H[2JNot connected.
+Failed to connect.
+2016-04-23 00:15:10 Failed to connect (wvdial or pppd failed to connect)
+2016-04-23 00:15:10 Testing connection...
+2016-04-23 00:15:14 Unable to establish Internet connection. Will keep trying...
+  Sakis3G info:
+  Cell network: No modem plugged or modem not set up.
+2016-04-23 00:15:24 Internet connection is DOWN. Calling Sakis3G connect...
+  Trying disconnect-reconnect...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g ignore disconnect connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+  Not connected.
+[3;J[H[2JNot connected.
+Failed to connect.
+2016-04-23 00:15:52 Failed to connect (wvdial or pppd failed to connect)
+2016-04-23 00:15:52 Testing connection...
+2016-04-23 00:15:55 Unable to establish Internet connection. Will keep trying...
+  Sakis3G info:
+  Cell network: No modem plugged or modem not set up.
+2016-04-23 00:16:06 Internet connection is DOWN. Calling Sakis3G connect...
+  Trying disconnect-reconnect...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g ignore disconnect connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+2016-04-23 00:16:14 (PID: 14251): Caught signal 2 (SIGINT)
+2016-04-23 00:16:14 (PID: 14251): Program terminated cleanly.
+  ---
+2016-04-23 00:16:17 Start: ver. 2.07 20151004; PID = 9690; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-23 00:16:24 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+  [3;J[H[2JFailed to connect.
+2016-04-23 00:16:51 Failed to connect (wvdial or pppd failed to connect)
+2016-04-23 00:16:51 Testing connection...
+2016-04-23 00:16:55 Unable to establish Internet connection. Will keep trying...
+  Sakis3G info:
+2016-04-23 00:17:00 (PID: 9690): Caught signal 2 (SIGINT)
+2016-04-23 00:17:00 (PID: 9690): Program terminated cleanly.
+  ---
+2016-04-23 00:19:46 Start: ver. 2.07 20151004; PID = 18884; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-23 00:19:53 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+  [3;J[H[2JMegaFon M150-2 connected to MegaFon (25002).
+2016-04-23 00:20:21 Testing connection...
+2016-04-23 00:20:25 Success... we are online!
+2016-04-23 00:20:35 (PID: 18884): Caught signal 2 (SIGINT)
+2016-04-23 00:20:35 (PID: 18884): Program terminated cleanly.
+  ---
+2016-04-23 00:18:25 Start: ver. 2.07 20151004; PID = 845; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-23 00:18:32 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+  [3;J[H[2JMegaFon M150-2 connected to MegaFon (25002).
+2016-04-23 00:18:59 Testing connection...
+2016-04-23 00:19:03 Success... we are online!
+2016-04-23 00:24:59 (PID: 845): Caught signal 2 (SIGINT)
+2016-04-23 00:24:59 (PID: 845): Program terminated cleanly.
+  ---
+2016-04-23 00:41:26 Start: ver. 2.07 20151004; PID = 10015; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-23 00:41:32 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+  [3;J[H[2JMegaFon M150-2 connected to MegaFon (25002).
+2016-04-23 00:42:00 Testing connection...
+2016-04-23 00:42:03 Success... we are online!
+2016-04-23 00:44:45 (PID: 10015): Caught signal 15 (SIGTERM)
+2016-04-23 00:44:45 (PID: 10015): Program terminated cleanly.
+  ---
+2016-04-23 00:49:35 Start: ver. 2.07 20151004; PID = 21963; Python v. 2.7.9
+  stats period = 8s, connection check period = 32s
+  Internet status:
+  Cell network: No modem plugged or modem not set up.
+2016-04-23 00:49:42 Program startup. Calling Sakis3G connect, to be sure...
+  Sakis3G cmdLine: nice /home/pi/3g/sakis3g connect --sudo --console USBINTERFACE='1' OTHER='USBMODEM' USBMODEM='12d1:1506' APN='CUSTOM_APN' CUSTOM_APN='internet' SIM_PIN='5445' APN_USER='gdata' APN_PASS='gdata'
+  Sakis3G says...
+  [3;J[H[2JMegaFon M150-2 connected to MegaFon (25002).
+2016-04-23 00:50:10 Testing connection...
+2016-04-23 00:50:13 Success... we are online!
+2016-04-23 00:53:04 (PID: 21963): Caught signal 1 (SIGHUP)
+2016-04-23 00:53:04 (PID: 21963): Caught signal 1 (SIGHUP)
+2016-04-23 00:53:04 (PID: 21963): Program terminated cleanly.
