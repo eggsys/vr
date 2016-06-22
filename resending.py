@@ -1,24 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import RPi.GPIO as GPIO
 import time
 import os
-import subprocess
+from subprocess import Popen, PIPE, STDOUT
+import signal
 import fnmatch
+import const
 
-def getserial():
-    # Extract serial from cpuinfo file
-    cpuserial = "0000000000000000"
-    try:
-        f = open('/proc/cpuinfo','r')
-        for line in f:
-            if line[0:6]=='Serial':
-                cpuserial = line[10:26]
-        f.close()
-    except:
-        cpuserial = "ERROR000000000"
-    return cpuserial
-
+def GPIO_setup():
+    GPIO.setmode(GPIO.BOARD)
+    SEND = 16
+    GPIO.setup(const.SEND,GPIO.OUT)
+    #GPIO.cleanup()
+    
 def list_files(path, ext):
     # returns a list of names (with extension, without full path) of all files 
     # in folder path
@@ -29,30 +25,65 @@ def list_files(path, ext):
     return files 
 
 try:
-    filelist = list_files("/home/pi/send/","*.txt")
-    for f in filelist:
-        tf = open(os.path.join("/home/pi/send/", f),'r')
-        fileinfo = tf.read()
-        tf.close()
-        filename = f[0:32] + ".mp4"
-        # check file creation
-        if (not os.path.isfile(os.path.join("/home/pi/send/", filename))):
-            break
-        print("curl -i -F id='" + str(getserial()) + 
-                    "' -F date='" + fileinfo + "' -F filename='" + filename + 
-                    "' -F filedata=@" + filename + " http://pm1.odwr.ru/sync")
-        retry_send = 1
-        while retry_send:
-            try:
-                retry_send = subprocess.call("curl -i -F id='" + str(getserial()) + 
-                            "' -F date='" + fileinfo + 
-                            "' -F filename='" + filename +
-                            "' -F filedata=@" + "/home/pi/send/" + filename + " http://pm1.odwr.ru/sync > /home/pi/send/curl.log", shell=True)
-            except:
-                print("curl_resend error")
-            time.sleep(1)
-        os.remove(os.path.join("/home/pi/send/", filename))
-        os.remove(os.path.join("/home/pi/send/", filename[0:32] + ".txt"))
+    GPIO_setup()
 
+    timenow = time.strftime("%Y-%m-%d %H:%M:%S")
+    print(timenow)
+
+    print("Resending started")
+    #rename .tx_ files to .txt (if found)
+    try:
+        filelist = list_files(const.PATH_SEND,"*.tx_")
+        for f in filelist:
+            print("os.rename("+const.PATH_SEND + f+", "+const.PATH_SEND + f[0:32] + ".txt"+")")
+            os.rename(const.PATH_SEND + f, const.PATH_SEND + f[0:32] + ".txt")
+    except:
+        print("Rename error")
+    #main loop
+    while True:
+        if (const.internet_on()):
+            try:
+                filelist = list_files(const.PATH_SEND,"*.txt")
+                for f in filelist:
+                    tf = open(os.path.join(const.PATH_SEND, f),'r')
+                    fileinfo = tf.read()
+                    tf.close()
+                    
+                    filename = f[0:32] + ".mp4"
+                    # check file creation
+                    if (not os.path.isfile(os.path.join(const.PATH_SEND, filename))):
+                        break
+                    GPIO.output(const.SEND, True)
+                    cmd = ("curl --connect-timeout 15 --max-time 300 --silent " + 
+                                "-F id='" + str(const.getserial()) + "' " +
+                                "-F date='" + fileinfo + "' " +
+                                "-F filename='" + filename + "' " +
+                                "-F filedata=@" + const.PATH_SEND + filename + " " + const.URL_DATA + "")
+                    print(cmd)
+                    try:
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE,stderr=STDOUT, close_fds=True)
+                        result = p.stdout.read()
+                        print("Result: " + result)
+                        if result == "Success":
+                            print("Remove "+filename)
+                            os.remove(os.path.join(const.PATH_SEND, filename))
+                            os.remove(os.path.join(const.PATH_SEND, filename[0:32] + ".txt"))
+                    #except:
+                    #    print("Curl error")
+                    except Exception, e:
+                        print("Curl error: "+ str(e))
+                    GPIO.output(const.SEND, False)
+            except KeyboardInterrupt:
+                print("Ctrl-C pressed")
+        else:
+            print("No internet")
+        #print("Sleep 5 seconds...")
+        time.sleep(5)
 except KeyboardInterrupt:
     print("Ctrl-C pressed")
+    GPIO.cleanup()
+except Exception, e:
+    print("Eerror:"+ str(e))
+    #GPIO.cleanup()
+finally:
+    GPIO.cleanup()

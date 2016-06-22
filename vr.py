@@ -2,71 +2,70 @@
 # -*- coding: utf-8 -*-
 
 import RPi.GPIO as GPIO
+import MFRC522
 import time
 import os
 import subprocess
 import signal
 import md5
 from multiprocessing import Process
+import const
 
-def getserial():
-    # Extract serial from cpuinfo file
-    cpuserial = "0000000000000000"
-    try:
-        f = open('/proc/cpuinfo','r')
-        for line in f:
-            if line[0:6]=='Serial':
-                cpuserial = line[10:26]
-        f.close()
-    except:
-        cpuserial = "ERROR000000000"
-    return cpuserial
+def GPIO_setup():
+    global MIFAREReader
+    MIFAREReader = MFRC522.MFRC522()
+    #GPIO.setmode(GPIO.BCM)
+    #GPIO.setup(const.SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(const.READY,GPIO.OUT)
+    #GPIO.setup(const.SEND,GPIO.OUT)
+    #GPIO.add_event_detect(const.SWITCH, GPIO.RISING, bouncetime = 250) 
 
 def P0():
     global sending
 
     print("Working process started")
-    GPIO.output(SEND, True)
+    
     sending += 1
     # check file creation
-    if (not os.path.isfile("/home/pi/out.h264")):
+    if (not os.path.isfile(const.PATH_BASE + "out.h264")):
         return
     timenow = time.strftime("%Y-%m-%d %H:%M:%S")
-    filename = md5.new(getserial() + str(int(time.mktime(time.strptime(timenow,"%Y-%m-%d %H:%M:%S"))))).hexdigest() + ".mp4"
-    textfile = open("/home/pi/send/" + filename[0:32] + ".txt","w")
-    subprocess.call("MP4Box -add /home/pi/out.h264 /home/pi/send/out.mp4", shell=True)
-    os.rename("/home/pi/send/out.mp4", "/home/pi/send/" + filename)
+    filename = md5.new(const.getserial() + str(int(time.mktime(time.strptime(timenow,"%Y-%m-%d %H:%M:%S"))))).hexdigest()
+    subprocess.call("MP4Box -add " + const.PATH_BASE + "out.h264 " + const.PATH_SEND + "out.mp4", shell=True)
+    os.rename(const.PATH_SEND + "out.mp4", const.PATH_SEND + filename + ".mp4")
+    videofile = open(const.PATH_SEND + filename + ".mp4","r")
+    os.fsync(videofile.fileno())
+    videofile.close()
+
+    textfile = open(const.PATH_SEND + filename + ".tx_","w")
     textfile.write(timenow)
-    textfile.close
-    print("curl -i -F id='" + str(getserial()) + 
-                "' -F date='" + timenow + "' -F filename='" + filename + 
-                "' -F filedata=@" + filename + " http://pm1.odwr.ru/sync")
-    try:
-        retry_send = subprocess.call("curl -i -F id='" + str(getserial()) + 
-                    "' -F date='" + timenow + 
-                    "' -F filename='" + filename +
-                    "' http://pm1.odwr.ru/sync > /home/pi/curl.log", shell=True)
-    except:
-        print("curl1 error")
-    retry_send = 1
-    while retry_send:
+    textfile.flush()
+    os.fsync(textfile.fileno())
+    textfile.close()
+    os.rename(const.PATH_SEND + filename + ".tx_", const.PATH_SEND + filename + ".txt")
+    
+    time.sleep(1)
+
+    
+    #print("curl -i --connect-timeout 10 --max-time 15 -F id='" + str(const.getserial()) + 
+    #            "' -F date='" + timenow + "' -F filename='" + filename + ".mp4" + 
+    #            "' -F filedata=@" + filename + " " + const.URL_DATA + "")
+    if (const.internet_on()):
+        #GPIO.output(const.SEND, True)
         try:
-            retry_send = subprocess.call("curl -i -F id='" + str(getserial()) + 
+            retry_send = subprocess.call("curl -i --connect-timeout 10 --max-time 15 -F id='" + str(const.getserial()) + 
                         "' -F date='" + timenow + 
-                        "' -F filename='" + filename +
-                        "' -F filedata=@" + "/home/pi/send/" + filename + " http://pm1.odwr.ru/sync > /home/pi/curl.log", shell=True)
+                        "' -F filename='" + filename + ".mp4" +
+                        "' " + const.URL_DATA + " > " + const.PATH_LOG + "/vr_curl.log", shell=True)
         except:
-            print("curl2 error")
-        time.sleep(1)
-    os.remove("/home/pi/send/" + filename)
-    os.remove("/home/pi/send/" + filename[0:32] + ".txt")
-    sending -= 1
-    if (sending <= 0):
-        sending = 0
-        GPIO.output(SEND, False)
+            print("curl1 error")
+        
+        #GPIO.output(const.SEND, False)
     print("Working process ended")
 
 def gpio_callback(channel):
+    timenow = time.strftime("%Y-%m-%d %H:%M:%S")
+    print(timenow)      
     print("Button triggered")
     os.kill(proc.pid, signal.SIGUSR1)
     time.sleep(2) # Wait raspivid
@@ -76,23 +75,18 @@ def gpio_callback(channel):
 
 try:
     sending = 0
-    # GPIO setup
-    GPIO.setmode(GPIO.BCM)
-    SWITCH = 21
-    READY = 20
-    SEND = 16
-    GPIO.setup(SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(READY,GPIO.OUT)
-    GPIO.setup(SEND,GPIO.OUT)
-    GPIO.add_event_detect(SWITCH, GPIO.RISING, bouncetime = 80) 
+    GPIO_setup()
+
+    timenow = time.strftime("%Y-%m-%d %H:%M:%S")
+    print(timenow)
 
     #Start raspivid
     subprocess.call("killall raspivid", shell=True)
-    cmd = "/usr/bin/raspivid -c -o /home/pi/out.h264 -s -t 120000 -b 1100000 -rot 180"
+    cmd = "/usr/bin/raspivid -c -o /home/pi/out.h264 -s -t 60000 -b 1100000 -rot 180"
     proc = subprocess.Popen(cmd.split(), shell=False)
     print("raspivid started")
     time.sleep(1)
-    GPIO.output(READY, True)
+    GPIO.output(const.READY, True)
 
     #Main loop
     while True:
@@ -101,18 +95,28 @@ try:
             time.sleep(2)
             proc = subprocess.Popen(cmd.split(), shell=False)
             time.sleep(1)
-        if GPIO.event_detected(SWITCH):
-            GPIO.output(READY, False)
-            GPIO.remove_event_detect(SWITCH)
-            gpio_callback(SWITCH)
-            GPIO.add_event_detect(SWITCH, GPIO.RISING, bouncetime = 80)
-            GPIO.output(READY, True)
+        #if GPIO.event_detected(const.SWITCH):
+        (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
+        if status == MIFAREReader.MI_OK:
+            print "Card detected"
+        (status,backData) = MIFAREReader.MFRC522_Anticoll()
+        if status == MIFAREReader.MI_OK:
+            if backData in const.RFC_CARDS:
+                GPIO.output(const.READY, False)
+                #GPIO.remove_event_detect(const.SWITCH)
+                #gpio_callback(const.SWITCH)
+                gpio_callback(1)
+                #GPIO.add_event_detect(const.SWITCH, GPIO.RISING, bouncetime = 80)
+                GPIO.output(const.READY, True)
         time.sleep(0.1)
     
 except KeyboardInterrupt:
     print("Ctrl-C pressed")
-    GPIO.output(READY, False)
-    GPIO.cleanup()
+    GPIO.output(const.READY, False)
+    MIFAREReader.GPIO_CLEEN()
+    #GPIO.cleanup()
     
-finally: 
+finally:
+    MIFAREReader.GPIO_CLEEN()    
+    #GPIO.cleanup()
     proc.terminate()
