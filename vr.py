@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 import MFRC522
 import time
 import os
+import glob
 import subprocess
 import signal
 import md5
@@ -27,13 +28,14 @@ def P0():
     
     sending += 1
     # check file creation
-    if (not os.path.isfile(const.PATH_BASE + "out.h264")):
+    if (not os.path.isfile(const.PATH_PICAM + "rec/*.ts")):
         return
     timenow = time.strftime("%Y-%m-%d %H:%M:%S")
     filename = md5.new(const.getserial() + str(int(time.mktime(time.strptime(timenow,"%Y-%m-%d %H:%M:%S"))))).hexdigest()
-    subprocess.call("MP4Box -add " + const.PATH_BASE + "out.h264 " + const.PATH_SEND + "out.mp4", shell=True)
-    os.rename(const.PATH_SEND + "out.mp4", const.PATH_SEND + filename + ".mp4")
-    videofile = open(const.PATH_SEND + filename + ".mp4","r")
+    newest = max(glob.iglob(const.PATH_PICAM + 'rec/*.[Tt][Ss]'), key=os.path.getctime)
+    #subprocess.call("MP4Box -add " + const.PATH_BASE + "out.h264 " + const.PATH_SEND + "out.mp4", shell=True)
+    os.rename(const.PATH_PICAM + newest, const.PATH_SEND + filename + ".ts")
+    videofile = open(const.PATH_SEND + filename + ".ts","r")
     os.fsync(videofile.fileno())
     videofile.close()
 
@@ -55,7 +57,7 @@ def P0():
         try:
             retry_send = subprocess.call("curl -i --connect-timeout 10 --max-time 15 -F id='" + str(const.getserial()) + 
                         "' -F date='" + timenow + 
-                        "' -F filename='" + filename + ".mp4" +
+                        "' -F filename='" + filename + ".ts" +
                         "' " + const.URL_DATA + " > " + const.PATH_LOG + "/vr_curl.log", shell=True)
         except:
             print("curl1 error")
@@ -67,7 +69,11 @@ def gpio_callback(channel):
     timenow = time.strftime("%Y-%m-%d %H:%M:%S")
     print(timenow)      
     print("Button triggered")
-    os.kill(proc.pid, signal.SIGUSR1)
+    # Save video to file
+    subprocess.call("touch " + const.PATH_PICAM + "hooks/start_record", shell=True)
+    time.sleep(10)
+    subprocess.call("touch " + const.PATH_PICAM + "hooks/stop_record", shell=True)
+    #
     time.sleep(2) # Wait raspivid
     Process(target=P0, args=()).start()	# Start the subprocess
     time.sleep(1) # Wait P0 to start
@@ -81,17 +87,17 @@ try:
     print(timenow)
 
     #Start raspivid
-    subprocess.call("killall raspivid", shell=True)
-    cmd = "/usr/bin/raspivid -c -o /home/pi/out.h264 -s -t 60000 -b 1100000 -rot 180"
+    subprocess.call("killall picam", shell=True)
+    cmd = const.PATH_PICAM + "/picam --alsadev hw:1,0 --rotation 180 -f 25 -g 50 --recordbuf 55"
     proc = subprocess.Popen(cmd.split(), shell=False)
-    print("raspivid started")
+    print("picam started")
     time.sleep(1)
     GPIO.output(const.READY, True)
 
     #Main loop
     while True:
         if (proc.poll() <> None):
-            print("raspivid process not found. Restarting")
+            print("picam process not found. Restarting")
             time.sleep(2)
             proc = subprocess.Popen(cmd.split(), shell=False)
             time.sleep(1)

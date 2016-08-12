@@ -49,7 +49,7 @@ try:
                     fileinfo = tf.read()
                     tf.close()
                     
-                    filename = f[0:32] + ".mp4"
+                    filename = f[0:32] + ".ts"
                     # check file creation
                     if (not os.path.isfile(os.path.join(const.PATH_SEND, filename))):
                         break
