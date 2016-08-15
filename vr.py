@@ -34,10 +34,15 @@ def P0():
     #    return
     timenow = time.strftime("%Y-%m-%d %H:%M:%S")
     filename = md5.new(const.getserial() + str(int(time.mktime(time.strptime(timenow,"%Y-%m-%d %H:%M:%S"))))).hexdigest()
+    time.sleep(3)
     newest = max(glob.iglob(const.PATH_PICAM + 'rec/*.[Tt][Ss]'), key=os.path.getctime)
     #subprocess.call("MP4Box -add " + const.PATH_BASE + "out.h264 " + const.PATH_SEND + "out.mp4", shell=True)
     #os.rename(newest, const.PATH_SEND + filename + ".ts")
-    shutil.copyfile(newest, const.PATH_SEND + filename + ".ts",follow_symlinks=True)
+    shutil.copy2(newest, const.PATH_SEND + filename + ".ts")
+    linkto = os.readlink(newest)
+    os.remove(const.PATH_PICAM + 'rec/' + linkto)
+    os.remove(newest)
+    
     videofile = open(const.PATH_SEND + filename + ".ts","r")
     os.fsync(videofile.fileno())
     videofile.close()
@@ -55,7 +60,7 @@ def P0():
     #print("curl -i --connect-timeout 10 --max-time 15 -F id='" + str(const.getserial()) + 
     #            "' -F date='" + timenow + "' -F filename='" + filename + ".mp4" + 
     #            "' -F filedata=@" + filename + " " + const.URL_DATA + "")
-    if (0):#(const.internet_on()):
+    if (const.internet_on()):
         #GPIO.output(const.SEND, True)
         try:
             retry_send = subprocess.call("curl -i --connect-timeout 10 --max-time 15 -F id='" + str(const.getserial()) + 
@@ -100,7 +105,7 @@ try:
 
     #Main loop
     while True:
-        if (proc.poll() != None):
+        if (proc.poll() <> None):
             print("picam process not found. Restarting")
             time.sleep(2)
             proc = subprocess.Popen(cmd.split(), shell=False)
