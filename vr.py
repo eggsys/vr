@@ -6,6 +6,7 @@ import MFRC522
 import time
 import os
 import glob
+import shutil
 import subprocess
 import signal
 import md5
@@ -28,13 +29,15 @@ def P0():
     
     sending += 1
     # check file creation
-    if (not os.path.isfile(const.PATH_PICAM + "rec/*.ts")):
-        return
+    #if (not os.path.isfile(const.PATH_PICAM + "rec/*.ts")):
+    #    print('no file')
+    #    return
     timenow = time.strftime("%Y-%m-%d %H:%M:%S")
     filename = md5.new(const.getserial() + str(int(time.mktime(time.strptime(timenow,"%Y-%m-%d %H:%M:%S"))))).hexdigest()
     newest = max(glob.iglob(const.PATH_PICAM + 'rec/*.[Tt][Ss]'), key=os.path.getctime)
     #subprocess.call("MP4Box -add " + const.PATH_BASE + "out.h264 " + const.PATH_SEND + "out.mp4", shell=True)
-    os.rename(const.PATH_PICAM + newest, const.PATH_SEND + filename + ".ts")
+    #os.rename(newest, const.PATH_SEND + filename + ".ts")
+    shutil.copyfile(newest, const.PATH_SEND + filename + ".ts",follow_symlinks=True)
     videofile = open(const.PATH_SEND + filename + ".ts","r")
     os.fsync(videofile.fileno())
     videofile.close()
@@ -52,7 +55,7 @@ def P0():
     #print("curl -i --connect-timeout 10 --max-time 15 -F id='" + str(const.getserial()) + 
     #            "' -F date='" + timenow + "' -F filename='" + filename + ".mp4" + 
     #            "' -F filedata=@" + filename + " " + const.URL_DATA + "")
-    if (const.internet_on()):
+    if (0):#(const.internet_on()):
         #GPIO.output(const.SEND, True)
         try:
             retry_send = subprocess.call("curl -i --connect-timeout 10 --max-time 15 -F id='" + str(const.getserial()) + 
@@ -74,7 +77,7 @@ def gpio_callback(channel):
     time.sleep(10)
     subprocess.call("touch " + const.PATH_PICAM + "hooks/stop_record", shell=True)
     #
-    time.sleep(2) # Wait raspivid
+    #time.sleep(2) # Wait raspivid
     Process(target=P0, args=()).start()	# Start the subprocess
     time.sleep(1) # Wait P0 to start
     print("Callback function ended")
@@ -88,7 +91,8 @@ try:
 
     #Start raspivid
     subprocess.call("killall picam", shell=True)
-    cmd = const.PATH_PICAM + "/picam --alsadev hw:1,0 --rotation 180 -f 25 -g 50 --recordbuf 55"
+    os.chdir(const.PATH_PICAM)
+    cmd = const.PATH_PICAM + "picam --alsadev hw:1,0 --rotation 180 -f 25 -g 50 --recordbuf 55"
     proc = subprocess.Popen(cmd.split(), shell=False)
     print("picam started")
     time.sleep(1)
@@ -96,7 +100,7 @@ try:
 
     #Main loop
     while True:
-        if (proc.poll() <> None):
+        if (proc.poll() != None):
             print("picam process not found. Restarting")
             time.sleep(2)
             proc = subprocess.Popen(cmd.split(), shell=False)
@@ -104,7 +108,7 @@ try:
         #if GPIO.event_detected(const.SWITCH):
         (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
         if status == MIFAREReader.MI_OK:
-            print "Card detected"
+            print("Card detected")
         (status,backData) = MIFAREReader.MFRC522_Anticoll()
         if status == MIFAREReader.MI_OK:
             if backData in const.RFC_CARDS:
@@ -121,6 +125,8 @@ except KeyboardInterrupt:
     GPIO.output(const.READY, False)
     MIFAREReader.GPIO_CLEEN()
     #GPIO.cleanup()
+
+except Exception as e: print(e)
     
 finally:
     MIFAREReader.GPIO_CLEEN()    
