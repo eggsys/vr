@@ -9,7 +9,7 @@ import glob
 import shutil
 import subprocess
 import signal
-import md5
+import hashlib
 import wave
 from multiprocessing import Process
 from collections import deque
@@ -43,7 +43,8 @@ def P0():
        print('no file')
        return
     timenow = time.strftime("%Y-%m-%d %H:%M:%S")
-    filename = md5.new(const.getserial() + str(int(time.mktime(time.strptime(timenow,"%Y-%m-%d %H:%M:%S"))))).hexdigest()
+    m.update(const.getserial() + str(int(time.mktime(time.strptime(timenow,"%Y-%m-%d %H:%M:%S"))))) #md5
+    filename = m.hexdigest()
 
     #Write audio
     wf = wave.open(const.PATH_BASE + "out.wav", 'wb')
@@ -147,6 +148,8 @@ if __name__ == '__main__':
 
         audio_buffer = deque([], 1200)  # 1200*0.1s = 120s
         p = pyaudio.PyAudio()
+
+        m = hashlib.md5() #md5 calculator
 
         stream = p.open(format=pyaudio.paInt16,
                         channels=2,
