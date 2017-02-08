@@ -49,14 +49,15 @@ try:
                     fileinfo = tf.read()
                     tf.close()
                     
-                    filename = f[0:32] + ".ts"
+                    # filename = f[0:32] + ".ts"
+                    filename = f[0:32]
                     # check file creation
                     if (not os.path.isfile(os.path.join(const.PATH_SEND, filename))):
                         break
                     GPIO.output(const.SEND, True)
                     cmd = ("curl --connect-timeout 15 --max-time 300 --silent " + 
                                 "-F id='" + str(const.getserial()) + "' " +
-                                "-F date='" + fileinfo + "' " +
+                                "-F date='" + fileinfo + ".mp4' " +
                                 "-F filename='" + filename + "' " +
                                 "-F filedata=@" + const.PATH_SEND + filename + " " + const.URL_DATA + "")
                     print(cmd)
@@ -66,8 +67,8 @@ try:
                         print("Result: " + result)
                         if result == "Success":
                             print("Remove "+filename)
-                            os.remove(os.path.join(const.PATH_SEND, filename))
-                            os.remove(os.path.join(const.PATH_SEND, filename[0:32] + ".txt"))
+                            os.remove(os.path.join(const.PATH_SEND, filename + ".mp4"))
+                            os.remove(os.path.join(const.PATH_SEND, filename + ".txt"))
                     #except:
                     #    print("Curl error")
                     except Exception, e:
