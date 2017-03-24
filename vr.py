@@ -11,7 +11,9 @@ import subprocess
 import signal
 import hashlib
 import wave
-from multiprocessing import Process
+import pyaudio
+#from multiprocessing import Process
+from threading import Thread
 from collections import deque
 import const
 
@@ -32,7 +34,7 @@ def P0():
     Working process
     Name, write files and send announce
     '''
-    global sending
+    global sending, audio_buffer
 
     print("Working process started")
     
@@ -43,24 +45,33 @@ def P0():
        print('no file')
        return
     timenow = time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    m = hashlib.md5()
     m.update(const.getserial() + str(int(time.mktime(time.strptime(timenow,"%Y-%m-%d %H:%M:%S"))))) #md5
     filename = m.hexdigest()
 
     #Write audio
     wf = wave.open(const.PATH_BASE + "out.wav", 'wb')
 
-    waves = b''.join(audio_buffer)
-    new_waves = [waves[i:i + 2] for i in range(0, len(waves) - 1, 4)]
+    #waves = b''.join(audio_buffer)
+    #new_waves = [waves[i:i + 2] for i in range(0, len(waves) - 1, 4)]
 
     wf.setnchannels(1)
     wf.setsampwidth(2)
-    wf.setframerate(44100 // 2)
-    wf.writeframes(b''.join(new_waves))
+    wf.setframerate(44100)
+    wf.writeframes(b''.join(audio_buffer))
     wf.close()
+
+    print("len(audio_buffer)=",len(audio_buffer))
+    audio_buffer.clear()    
+    print("len(audio_buffer)=",len(audio_buffer))
 
     # time.sleep(3)
     # newest = max(glob.iglob(const.PATH_PICAM + 'rec/*.[Tt][Ss]'), key=os.path.getctime)
-    subprocess.call("MP4Box -add out.wav -add " + const.PATH_BASE + "out.h264 " + const.PATH_SEND + "out.mp4", shell=True)
+#    subprocess.call("MP4Box -add " + const.PATH_BASE + "out.wav -add " + const.PATH_BASE + "out.h264 " + const.PATH_SEND + "out.mp4", shell=True)
+    subprocess.call("lame " + const.PATH_BASE + "out.wav " + const.PATH_BASE + "out.mp3", shell=True)
+    subprocess.call("MP4Box -add " + const.PATH_BASE + "out.h264 " + const.PATH_SEND + "out.mp4", shell=True)
+    subprocess.call("MP4Box -add " + const.PATH_BASE + "out.mp3 " + const.PATH_SEND + "out.mp4", shell=True)
     os.rename(const.PATH_SEND + "out.mp4", const.PATH_SEND + filename + ".mp4")
     # os.rename(newest, const.PATH_SEND + filename + ".ts")
     # shutil.copy2(newest, const.PATH_SEND + filename + ".ts")
@@ -124,8 +135,10 @@ def gpio_callback(channel):
     #stop audio stream
     stream.stop_stream()
     time.sleep(2) # Wait raspivid
-    Process(target=P0, args=()).start()	# Start the subprocess
-    time.sleep(1) # Wait P0 to start
+    #Process(target=P0, args=()).start()	# Start the subprocess
+    Thread(target=P0, args=()).start()	# Start the subprocess
+    time.sleep(2) # Wait P0 to start
+    stream.start_stream()
     print("Callback function ended")
     lock = 0
 
@@ -146,17 +159,17 @@ if __name__ == '__main__':
         lock = 0
         GPIO_setup()
 
-        audio_buffer = deque([], 1200)  # 1200*0.1s = 120s
+        audio_buffer = deque([], 120)  # 1200*0.1s = 120s
         p = pyaudio.PyAudio()
 
-        m = hashlib.md5() #md5 calculator
-
         stream = p.open(format=pyaudio.paInt16,
-                        channels=2,
+                        channels=1,
                         rate=44100,
                         input=True,
-                        frames_per_buffer=44100 // 10,
+                        frames_per_buffer=44100 // 1,
                         stream_callback=audio_callback)
+        #start audio stream
+        stream.start_stream()
 
         timenow = time.strftime("%Y-%m-%d %H:%M:%S")
         print(timenow)
@@ -169,9 +182,7 @@ if __name__ == '__main__':
         # cmd = const.PATH_PICAM + "picam --alsadev hw:1,0 --rotation 180 -f 25 -g 50 --recordbuf 55"
         proc = subprocess.Popen(cmd.split(), shell=False)
         print("raspivid started")
-        #start audio stream
-        stream.start_stream()
-        time.sleep(1)
+
         GPIO.output(const.READY, True)
 
         #Main loop
@@ -192,7 +203,6 @@ if __name__ == '__main__':
             if status == MIFAREReader.MI_OK:
                 if backData in const.RFC_CARDS:
                     GPIO.output(const.READY, False)
-                    lock = 1
                     gpio_callback(1) #Actually we don't need separate callback function
                     GPIO.output(const.READY, True)
             time.sleep(0.1)

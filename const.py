@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import urllib2
 
-#URL_DOMAIN  = "http://pm1.odwr.ru/"
-URL_DOMAIN  = "http://pm1.euct.ru/"
+URL_DOMAIN  = "http://pm1.odwr.ru/"
+#URL_DOMAIN  = "http://pm1.euct.ru/"
 URL_DATA    = URL_DOMAIN + "sync"
 URL_UPDATE  = URL_DOMAIN + "sync/update"
 PATH_BASE   = "/home/pi/"
